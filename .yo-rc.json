@@ -1,0 +1,38 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "io.github.ml"
+    },
+    "jhipsterVersion": "6.8.0",
+    "applicationType": "microservice",
+    "baseName": "mlTools",
+    "packageName": "io.github.ml",
+    "packageFolder": "io/github/ml",
+    "serverPort": "51210",
+    "authenticationType": "jwt",
+    "cacheProvider": "hazelcast",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": "kafka",
+    "serviceDiscoveryType": "eureka",
+    "buildTool": "maven",
+    "enableSwaggerCodegen": true,
+    "jwtSecretKey": "NWFjZjI4YWQxMTY0YjdmMjcyZmQyMWYyZmI0OTRkZWNjYzRjMzFkOWZjMGJjMjc2ZmU4ZjNkMDg1MmY3MDIwZTJjMTAwZjZhMmU4YTBkODljNTU2NWYzYzY3MDRkNGY0NDk4OTQwNzVjNWJiMzJhMmNkZDNiOTBjYzk0N2M3NTI=",
+    "embeddableLaunchScript": false,
+    "creationTimestamp": 1587546030579,
+    "testFrameworks": ["gatling", "cucumber"],
+    "jhiPrefix": "gha",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "clientPackageManager": "npm",
+    "blueprints": [],
+    "skipClient": true,
+    "skipUserManagement": true
+  }
+}
