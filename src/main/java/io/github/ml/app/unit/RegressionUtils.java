@@ -34,7 +34,7 @@ public class RegressionUtils {
         double regularization = l2(targetFunction.getThetas(), dataSet, lambda);
 
         // calculate the error for each example and add to the total sum
-        totalCost = logisticCost(targetFunction, dataSet, labels, m, totalCost);
+        totalCost = logCost(targetFunction, dataSet, labels);
 
         return new CostAndGradient<>(totalCost + regularization, totalGradient);
     }
@@ -60,7 +60,7 @@ public class RegressionUtils {
         double regularization = l1(targetFunction.getThetas(), dataSet, lambda);
 
         // calculate the error for each example and add to the total sum
-        totalCost = logisticCost(targetFunction, dataSet, labels, m, totalCost);
+        totalCost = logCost(targetFunction, dataSet, labels);
 
         return new CostAndGradient<>(totalCost + regularization, totalGradient);
     }
@@ -113,7 +113,9 @@ public class RegressionUtils {
         return (1.0 / m) * sumErrors;
     }
 
-    private static double logisticCost(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels, int m, double totalCost) {
+    public static double logCost(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels) {
+        int m = dataSet.size();
+        double totalCost = 0.0;
         for (int i = 0; i < m; i++) {
             // feature vector for current example
             Double[] featureVector = dataSet.get(i);
@@ -121,7 +123,7 @@ public class RegressionUtils {
 
             double y = labels.get(i);
 
-            double cost = (-y * log(h) + (1 - y) * log(1 - h)) / (double) m;
+            double cost = - (y * log(h) + (1 - y) * log(1 - h)) / (double) m;
 
             totalCost += cost;
         }

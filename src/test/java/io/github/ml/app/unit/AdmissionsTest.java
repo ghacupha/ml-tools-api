@@ -77,7 +77,7 @@ public class AdmissionsTest {
 
         log.info("Cost for the model is  : {}", cost(trainedModel, dataset, labels));
 
-        Map<Integer, CostAndGradient> costMap = gradientDescentAlgorithm.getCostAndGradientPlot();
+        Map<Integer, Double> costMap = gradientDescentAlgorithm.getPlot();
 
         log.info("Cost map populated with {} items", costMap.size());
 
@@ -91,22 +91,13 @@ public class AdmissionsTest {
         costMap.forEach((iter, costGrad) -> {
             int index = iteration.getAndIncrement();
             iterations[index] = iter;
-            costs[index] = costGrad.getCost();
-//            gradients[index] = costGrad.getGradient().;
+            costs[index] = costGrad;
         });
 
         XYChart chart = QuickChart.getChart("Cost Chart", "Iterations", "Cost", "cost(iter)", iterations, costs);
 
         try {
             saveBitmap(chart, "target/costChart", BitmapFormat.PNG);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        XYChart gradChart = QuickChart.getChart("Gradient Chart", "Iterations", "Gradient", "gradient(iter)", iterations, gradients);
-
-        try {
-            saveBitmap(gradChart, "target/gradientChart", BitmapFormat.PNG);
         } catch (IOException e) {
             e.printStackTrace();
         }

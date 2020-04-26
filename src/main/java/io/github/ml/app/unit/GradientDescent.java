@@ -1,5 +1,6 @@
 package io.github.ml.app.unit;
 
+import io.github.ml.app.chart.Plottable;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -27,7 +28,7 @@ import java.util.function.Function;
  * different, so in future we need to methods for each.
  */
 @Slf4j
-public class GradientDescent implements Function<LearningInputs, RegressionFunction> {
+public class GradientDescent implements Function<LearningInputs, RegressionFunction>, Plottable<Map<Integer, Double>> {
 
     private final Map<Integer, Double> costPlot = new HashMap<>();
     private final Map<double[], Double> thetaMap = new HashMap<>();
@@ -96,7 +97,8 @@ public class GradientDescent implements Function<LearningInputs, RegressionFunct
     /**
      * @return Map containing costs and gradients
      */
-    public Map<Integer, Double> getCostAndGradientPlot() {
+    @Override
+    public Map<Integer, Double> getPlot() {
         return costPlot;
     }
 

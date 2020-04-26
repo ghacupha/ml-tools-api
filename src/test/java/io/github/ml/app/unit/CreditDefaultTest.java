@@ -57,7 +57,7 @@ public class CreditDefaultTest {
 
 
     private List<Credit> creditCards;
-    private static Plot<CostGradientChart<XYChart, XYChart>, Integer, CostAndGradient> costGradientPlot = new XYChartCostAndGradientPlot();
+    private static Plot<CostGradientChart<XYChart, XYChart>, Integer, Double> costGradientPlot = new XYChartCostAndGradientPlot();
 
     @BeforeEach
     void setUp() throws IOException {
@@ -134,20 +134,13 @@ public class CreditDefaultTest {
 
         log.info("Cost for the model is  : {}", cost(trainedModel, dataset, labels));
 
-        Map<Integer, CostAndGradient> costAndGradientMap = gradientDescentAlgorithm.getCostAndGradientPlot();
+        Map<Integer, Double> costAndGradientMap = gradientDescentAlgorithm.getPlot();
 
         // Plot the graph
         XYChart chart = costGradientPlot.plotGraph(costAndGradientMap).costChart();
-        XYChart gradChart = costGradientPlot.plotGraph(costAndGradientMap).gradientChart();
 
         try {
             saveBitmap(chart, "target/costChart", BitmapFormat.PNG);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            saveBitmap(gradChart, "target/gradientChart", BitmapFormat.PNG);
         } catch (IOException e) {
             e.printStackTrace();
         }

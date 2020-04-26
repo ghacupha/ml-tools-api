@@ -42,14 +42,15 @@ public class SimpleLearnUtilsTest {
         List<Double> labels = new ArrayList<>();
 
         irisData.forEach(item -> {
-            dataset.add(new Double[] {item.getSepalLength(), item.getSepalWidth(), item.getPetalLength(), item.getPetalWidth()});
+            // add 1 as the bias column
+            dataset.add(new Double[] {1.0, item.getSepalLength(), item.getSepalWidth(), item.getPetalLength(), item.getPetalWidth()});
             labels.add(item.getLabel());
         });
 
-        Function<Double[], Double> targetFunction = new LinearRegressionFunction(new double[] {0.5, 0.5, 0.5, 0.5});
+        RegressionFunction targetFunction = new LogisticRegressionFunction(new double[] {0.5, 0.5, 0.5, 0.5, 0.5});
 
-        double cost = RegressionUtils.cost(targetFunction, dataset, labels);
+        double cost = RegressionUtils.logCost(targetFunction, dataset, labels);
 
-        assertEquals(15.999625, cost, 0.0000001);
+        assertEquals(2.78535550505717, cost, 0.0000001);
     }
 }
