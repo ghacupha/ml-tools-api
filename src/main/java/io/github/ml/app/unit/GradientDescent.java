@@ -31,10 +31,13 @@ import java.util.function.Function;
 public class GradientDescent implements Function<LearningInputs, RegressionFunction> {
 
     private final Map<Integer, CostAndGradient> costAndGradientPlot = new HashMap<>();
-    private final Map<double[], Double> thetaMap = new HashMap<double[], Double>();
+    private final Map<double[], Double> thetaMap = new HashMap<>();
 
     /**
-     * This method will call multiple iterations to the train method inorder to train a target function and at the same time map the cost to each iteration in order to see if cost is reducing with
+     * This method will call multiple iterations to the train method inorder to train a target function and
+     * <p>
+     * at the same time map the cost to each iteration in order to see if cost is reducing with
+     * <p>
      * each iteration
      */
     @Override
@@ -100,7 +103,10 @@ public class GradientDescent implements Function<LearningInputs, RegressionFunct
     }
 
     /**
-     * This function tests whether convergence has been attained by checking if the difference between the old and new values of theta is smaller than this criteria. If this is the case I stop the
+     * This function tests whether convergence has been attained by checking if the difference between
+     * <p>
+     * the old and new values of theta is smaller than this criteria. If this is the case I stop the
+     * <p>
      * loop since theta will not change in a meaningful way.
      */
     private boolean convergenceIsAttained(final double[] oldTheta, final double[] newTheta, final double epsilon) {
