@@ -31,7 +31,7 @@ public class RegressionUtils {
         double totalGradient = 0;
 
         // calculate L2 regularization
-        double regularization = l2(targetFunction, dataSet, lambda);
+        double regularization = l2(targetFunction.getThetas(), dataSet, lambda);
 
         // calculate the error for each example and add to the total sum
         totalCost = logisticCost(targetFunction, dataSet, labels, m, totalCost);
@@ -57,7 +57,7 @@ public class RegressionUtils {
         double totalGradient = 0;
 
         // calculate L1 regularization
-        double regularization = l1(targetFunction, dataSet, lambda);
+        double regularization = l1(targetFunction.getThetas(), dataSet, lambda);
 
         // calculate the error for each example and add to the total sum
         totalCost = logisticCost(targetFunction, dataSet, labels, m, totalCost);
@@ -128,11 +128,9 @@ public class RegressionUtils {
         return totalCost;
     }
 
-    private static double l2(RegressionFunction targetFunction, List<Double[]> dataSet, double lambda) {
+    private static double l2(double[] thetas, List<Double[]> dataSet, double lambda) {
 
         int m = dataSet.size();
-
-        double[] thetas = targetFunction.getThetas();
 
         double regularization = 0;
 
@@ -146,11 +144,9 @@ public class RegressionUtils {
         return regularization * (lambda / (2 * (double) m));
     }
 
-    private static double l1(RegressionFunction targetFunction, List<Double[]> dataSet, double lambda) {
+    private static double l1(double[] thetas, List<Double[]> dataSet, double lambda) {
 
         int m = dataSet.size();
-
-        double[] thetas = targetFunction.getThetas();
 
         double regularization = 0;
 
@@ -260,31 +256,33 @@ public class RegressionUtils {
      * @param labels
      * @return
      */
-    public static double gradient(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels) {
+    public static double[] gradient(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels) {
         return gradient(targetFunction, dataSet, labels, targetFunction.getThetas().clone());
     }
 
     /**
-     * This function calculates the gradient of a target function
+     * Calculates and returns a vector of partial derivatives for a given input vector of thetas
      *
-     * @param targetFunction
-     * @param dataset
-     * @param labels
-     * @param thetaVector
-     * @return
+     * @param targetFunction Target Function
+     * @param dataSet feature vector
+     * @param labels labels equivalent to the dataSet
+     * @param thetaVector the input vector
+     * @return the vector of first partial derivatives
      */
-    public static double gradient(RegressionFunction targetFunction, List<Double[]> dataset, List<Double> labels, double[] thetaVector) {
-        int m = dataset.size();
+    public static double[] gradient(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels, double[] thetaVector) {
+        int m = dataSet.size();
         // Summarise the error gap * feature
-        double sumErrors = 0;
+        double[] grads = new double [thetaVector.length];
         for (int j = 0; j < thetaVector.length; j++) {
+            double totalGrad = 0.0;
             for (int i = 0; i < m; i++) {
-                Double[] featureVector = dataset.get(i);
+                Double[] featureVector = dataSet.get(i);
                 double error = targetFunction.apply(featureVector) - labels.get(i);
-                sumErrors += error * featureVector[j];
+                totalGrad += error * featureVector[j];
             }
+            grads[j] = (1.0 / (double) m) * totalGrad;
         }
-        return (1.0 / m) * sumErrors;
+        return grads;
     }
 
 
