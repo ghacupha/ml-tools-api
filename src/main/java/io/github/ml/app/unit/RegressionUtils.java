@@ -236,7 +236,8 @@ public class RegressionUtils {
                                                         List<Double> labels,
                                                         double alpha) {
 
-        double[] thetaVector = targetFunction.getThetas(double[] newThetaVector = new double[thetaVector.length];
+        double[] thetaVector = targetFunction.getThetas();
+        double[] newThetaVector = new double[thetaVector.length];
         double[] partialDerivatives = computeDerivativeTerm(targetFunction, dataSet, labels);
 
         // compute the new theta

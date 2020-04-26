@@ -43,7 +43,7 @@ public class LogGradientDescent implements Function<LearningInputs, RegressionFu
 
         for (int i = 0; i <= inputs.getMaximumIterations(); i++) {
 
-            iteration++;
+            ++iteration;
 
             double[] oldTheta = targetFunction.getThetas().clone();
 

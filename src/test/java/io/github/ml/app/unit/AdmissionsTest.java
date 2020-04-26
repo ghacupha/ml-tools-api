@@ -58,8 +58,8 @@ public class AdmissionsTest {
             .targetFunction(targetFunction)
             .dataset(dataset)
             .labels(labels)
-            .alpha(0.01)
-            .epsilon(0.001)
+            .alpha(0.00001)
+            .epsilon(0.00001)
             .maximumIterations(10000)
             .build();
         // @formatter:on

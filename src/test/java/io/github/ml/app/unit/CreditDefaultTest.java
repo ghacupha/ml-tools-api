@@ -121,8 +121,8 @@ public class CreditDefaultTest {
                                             .targetFunction(targetFunction)
                                             .dataset(dataset)
                                             .labels(labels)
-                                            .alpha(0.001)
-                                            .epsilon(0.01)
+                                            .alpha(0.01)
+                                            .epsilon(0.001)
                                             .maximumIterations(10000000)
                                             .build();
         // @formatter:on
