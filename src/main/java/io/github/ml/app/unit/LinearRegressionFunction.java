@@ -1,5 +1,7 @@
 package io.github.ml.app.unit;
 
+import java.util.List;
+
 /**
  * This is a simple function for applying a theta vector learned in a model to a feature
  * vector.
@@ -42,5 +44,15 @@ public class LinearRegressionFunction implements RegressionFunction {
     @Override
     public double[] getThetas() {
         return this.thetaVector.clone();
+    }
+
+    @Override
+    public double cost(List<Double[]> dataSet, List<Double> labels) {
+        return RegressionUtils.cost(this, dataSet, labels);
+    }
+
+    @Override
+    public double[] derivative(List<Double[]> dataSet, List<Double> labels) {
+        return RegressionUtils.computeDerivativeTerm(this, dataSet, labels);
     }
 }

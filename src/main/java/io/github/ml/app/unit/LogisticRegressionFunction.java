@@ -1,5 +1,7 @@
 package io.github.ml.app.unit;
 
+import java.util.List;
+
 import static io.github.ml.app.unit.RegressionUtils.sigmoidFunction;
 
 /**
@@ -23,5 +25,15 @@ public class LogisticRegressionFunction implements RegressionFunction {
     @Override
     public double[] getThetas() {
         return linearRegressionFunction.getThetas().clone();
+    }
+
+    @Override
+    public double cost(List<Double[]> dataSet, List<Double> labels) {
+        return RegressionUtils.logCost(this, dataSet, labels);
+    }
+
+    @Override
+    public double[] derivative(List<Double[]> dataSet, List<Double> labels) {
+        return RegressionUtils.computeDerivativeTerm(this, dataSet, labels);
     }
 }

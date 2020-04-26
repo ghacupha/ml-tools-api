@@ -113,6 +113,14 @@ public class RegressionUtils {
         return (1.0 / m) * sumErrors;
     }
 
+    /**
+     * MLE-based computation of loss for logistic regression
+     *
+     * @param targetFunction logisticRegression Function
+     * @param dataSet feature matrix
+     * @param labels y vector
+     * @return cost of the logistic function
+     */
     public static double logCost(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels) {
         int m = dataSet.size();
         double totalCost = 0.0;
