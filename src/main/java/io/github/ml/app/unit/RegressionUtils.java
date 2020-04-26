@@ -226,23 +226,14 @@ public class RegressionUtils {
                                            List<Double> labels,
                                            double alpha) {
 
-        int m = dataset.size();
         double[] thetaVector = targetFunction.getThetas();
         double[] newThetaVector = new double[thetaVector.length];
+        double[] partialDerivatives = computeDerivativeTerm(targetFunction, dataset, labels);
 
         // compute the new theta
         for (int j = 0; j < thetaVector.length; j++) {
-            // Summarise the error gap * feature
-            double sumErrors = 0;
-            for (int i = 0; i < m; i++) {
-                Double[] featureVector = dataset.get(i);
-                double error = targetFunction.apply(featureVector) - labels.get(i);
-                sumErrors += error * featureVector[j];
-            }
-
             // compute the new theta  value
-            double gradient = (1.0 / m) * sumErrors;
-            newThetaVector[j] = thetaVector[j] - alpha * gradient;
+            newThetaVector[j] = thetaVector[j] - alpha * partialDerivatives[j];
         }
 
         return new LinearRegressionFunction(newThetaVector);
@@ -256,8 +247,8 @@ public class RegressionUtils {
      * @param labels
      * @return
      */
-    public static double[] gradient(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels) {
-        return gradient(targetFunction, dataSet, labels, targetFunction.getThetas().clone());
+    public static double[] computeDerivativeTerm(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels) {
+        return computeDerivativeTerm(targetFunction, dataSet, labels, targetFunction.getThetas().clone());
     }
 
     /**
@@ -269,7 +260,7 @@ public class RegressionUtils {
      * @param thetaVector the input vector
      * @return the vector of first partial derivatives
      */
-    public static double[] gradient(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels, double[] thetaVector) {
+    public static double[] computeDerivativeTerm(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels, double[] thetaVector) {
         int m = dataSet.size();
         // Summarise the error gap * feature
         double[] grads = new double [thetaVector.length];
