@@ -221,7 +221,7 @@ public class RegressionUtils {
      * @param alpha          learning rate
      * @return
      */
-    public static RegressionFunction train(RegressionFunction targetFunction,
+    public static RegressionFunction iterationUpdate(RegressionFunction targetFunction,
                                            List<Double[]> dataset,
                                            List<Double> labels,
                                            double alpha) {

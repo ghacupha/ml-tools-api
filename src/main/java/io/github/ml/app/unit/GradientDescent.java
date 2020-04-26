@@ -1,6 +1,5 @@
 package io.github.ml.app.unit;
 
-import io.github.ml.app.chart.CostAndGradient;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -30,7 +29,7 @@ import java.util.function.Function;
 @Slf4j
 public class GradientDescent implements Function<LearningInputs, RegressionFunction> {
 
-    private final Map<Integer, CostAndGradient> costAndGradientPlot = new HashMap<>();
+    private final Map<Integer, Double> costPlot = new HashMap<>();
     private final Map<double[], Double> thetaMap = new HashMap<>();
 
     /**
@@ -51,8 +50,8 @@ public class GradientDescent implements Function<LearningInputs, RegressionFunct
         RegressionFunction targetFunction = inputs.getTargetFunction();
 
         double cost = RegressionUtils.cost(targetFunction, inputs.getDataset(), inputs.getLabels());
-        double gradient = RegressionUtils.gradient(targetFunction, inputs.getDataset(), inputs.getLabels());
-        costAndGradientPlot.put(iteration, new CostAndGradient<>(cost, gradient));
+
+        costPlot.put(iteration, cost);
 
         for (int i = 0; i <= inputs.getMaximumIterations(); i++) {
 
@@ -61,12 +60,11 @@ public class GradientDescent implements Function<LearningInputs, RegressionFunct
             thetaMap.put(oldTheta, cost);
 
             // Train model to get new theta
-            targetFunction = RegressionUtils.train(targetFunction, inputs.getDataset(), inputs.getLabels(), inputs.getAlpha());
+            targetFunction = RegressionUtils.iterationUpdate(targetFunction, inputs.getDataset(), inputs.getLabels(), inputs.getAlpha());
 
             newTheta = targetFunction.getThetas().clone();
 
             cost = RegressionUtils.cost(new LinearRegressionFunction(newTheta), inputs.getDataset(), inputs.getLabels());
-            gradient = RegressionUtils.gradient(new LinearRegressionFunction(newTheta), inputs.getDataset(), inputs.getLabels());
 
             if (Double.isNaN(cost) || Double.isInfinite(cost)) {
                 // at this point the model has degraded better to use older theta
@@ -81,7 +79,7 @@ public class GradientDescent implements Function<LearningInputs, RegressionFunct
 
             // the chart library cannot chart infinity
             if (!Double.isInfinite(cost) || !Double.isNaN(cost)) {
-                costAndGradientPlot.put(iteration++, new CostAndGradient<>(cost, gradient));
+                costPlot.put(iteration++, cost);
             }
 
             if (convergenceIsAttained(oldTheta, newTheta, inputs.getEpsilon())) {
@@ -98,8 +96,8 @@ public class GradientDescent implements Function<LearningInputs, RegressionFunct
     /**
      * @return Map containing costs and gradients
      */
-    public Map<Integer, CostAndGradient> getCostAndGradientPlot() {
-        return costAndGradientPlot;
+    public Map<Integer, Double> getCostAndGradientPlot() {
+        return costPlot;
     }
 
     /**

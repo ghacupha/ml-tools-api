@@ -15,10 +15,4 @@ public interface CostGradientChart<C,G> {
      * @return The cost chart
      */
     C costChart();
-
-    /**
-     *
-     * @return The gradient chart
-     */
-    G gradientChart();
 }
