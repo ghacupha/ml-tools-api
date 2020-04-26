@@ -1,7 +1,6 @@
 package io.github.ml.app.unit;
 
 import io.github.ml.app.chart.CostAndGradient;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.function.Function;
@@ -75,7 +74,7 @@ public class RegressionUtils {
      * @param thetaVector
      * @return
      */
-    public static double l2_gradient(RegressionFunction targetFunction, List<Double[]> dataset, List<Double> labels, double[] thetaVector, double lambda) {
+    private static double l2_gradient(RegressionFunction targetFunction, List<Double[]> dataset, List<Double> labels, double[] thetaVector, double lambda) {
         int m = dataset.size();
         // Summarise the error gap * feature
         double sumErrors = 0;
@@ -99,7 +98,7 @@ public class RegressionUtils {
      * @param thetaVector
      * @return
      */
-    public static double l1_gradient(RegressionFunction targetFunction, List<Double[]> dataset, List<Double> labels, double[] thetaVector, double lambda) {
+    private static double l1_gradient(RegressionFunction targetFunction, List<Double[]> dataset, List<Double> labels, double[] thetaVector, double lambda) {
         int m = dataset.size();
         // Summarise the error gap * feature
         double sumErrors = 0;
@@ -286,5 +285,11 @@ public class RegressionUtils {
             }
         }
         return (1.0 / m) * sumErrors;
+    }
+
+
+    public static Function<Double, Double> sigmoidFunction() {
+
+        return z -> 1.0 / (1.0 + Math.exp(-z));
     }
 }

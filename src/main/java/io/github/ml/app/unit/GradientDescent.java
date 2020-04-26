@@ -20,6 +20,12 @@ import java.util.function.Function;
  * will simply return the LinearRegressionFunction with the previous theta values which had the
  * <p>
  * least cost. Normal models do not work like that, but normal models are not created in java.
+ * <p>
+ * With every iteration we take the theta value and subtract the learning rate multiplied by the derivative
+ * <p>
+ * term. The derivative term for linear regression and the derivative term for logistic regression are
+ * <p>
+ * different, so in future we need to methods for each.
  */
 @Slf4j
 public class GradientDescent implements Function<LearningInputs, RegressionFunction> {

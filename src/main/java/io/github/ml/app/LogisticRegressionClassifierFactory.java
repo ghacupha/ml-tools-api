@@ -17,7 +17,7 @@ import edu.stanford.nlp.util.ReflectionLoading;
  * @author Ramesh Nallapati nmramesh@cs.stanford.edu
  *
  */
-public class LogisticRegressionClassifierFactory<L,F> implements ClassifierFactory<L, F, LogisticRegressionClassifier<L,F>>  {
+public class  LogisticRegressionClassifierFactory<L,F> implements ClassifierFactory<L, F, LogisticRegressionClassifier<L,F>>  {
     private static final long serialVersionUID = 1L;
     private double[] weights;
     private Index<F> featureIndex;
