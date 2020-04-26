@@ -1,6 +1,5 @@
 package io.github.ml.app.unit;
 
-import io.github.ml.app.chart.CostAndGradient;
 import io.github.ml.app.excel.ExcelFileDeserializer;
 import io.github.ml.app.models.Admission;
 import lombok.extern.slf4j.Slf4j;
@@ -19,15 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static io.github.ml.app.excel.ExcelTestUtil.admissionExcelFileDeserializer;
 import static io.github.ml.app.excel.ExcelTestUtil.readFile;
 import static io.github.ml.app.excel.ExcelTestUtil.toBytes;
-import static io.github.ml.app.unit.RegressionUtils.cost;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.knowm.xchart.BitmapEncoder.saveBitmap;
 
-/**
- * This test uses the admissions data to perform a quasi classification though ideally that should be the work of a
- * <p>
- * logistic regression model
- */
 @Slf4j
 public class AdmissionsTest {
 
@@ -35,7 +28,6 @@ public class AdmissionsTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        //        File irisFile = new File("/data/iris.xlsx");
         ExcelFileDeserializer<Admission> deserializer = admissionExcelFileDeserializer();
         admissions = deserializer.deserialize(toBytes(readFile("admissions-data.xlsx")));
     }
@@ -51,13 +43,15 @@ public class AdmissionsTest {
             labels.add(item.getAdmit());
         });
 
-        LinearRegressionFunction targetFunction = new LinearRegressionFunction(new double[]{0, 0, 0, 0});
+        // setup logistic regression function
+        RegressionFunction targetFunction = new LogisticRegressionFunction(new double[]{0, 0, 0, 0});
 
-        double cost = cost(targetFunction, dataset, labels);
+        // calculate cost
+        double cost = targetFunction.cost(dataset, labels);
 
-        log.info("Cost for the model before training is  : {}", cost(targetFunction, dataset, labels));
+        log.info("Cost for the model before training is  : {}", cost);
 
-        assertEquals(0.15875, cost, 0.0000001);
+        assertEquals(0.6931471805599427, cost, 0.0000001);
 
         // @formatter:off
         LearningInputs inputs = LearningInputs.builder()
@@ -66,16 +60,18 @@ public class AdmissionsTest {
             .labels(labels)
             .alpha(0.01)
             .epsilon(0.001)
-            .maximumIterations(100)
+            .maximumIterations(10000)
             .build();
         // @formatter:on
 
 
-        GradientDescent gradientDescentAlgorithm = new GradientDescent();
+        LogGradientDescent gradientDescentAlgorithm = new LogGradientDescent();
 
         RegressionFunction trainedModel = gradientDescentAlgorithm.apply(inputs);
 
-        log.info("Cost for the model is  : {}", cost(trainedModel, dataset, labels));
+        cost = trainedModel.cost(dataset, labels);
+
+        assertEquals(0.34125, cost, 0.0000001);
 
         Map<Integer, Double> costMap = gradientDescentAlgorithm.getPlot();
 
@@ -84,14 +80,13 @@ public class AdmissionsTest {
         // Create visuals for the reducing cost
         double[] iterations = new double[costMap.keySet().size()];
         double[] costs = new double[costMap.keySet().size()];
-        double[] gradients = new double[costMap.keySet().size()];
 
         // populate chart data
         AtomicInteger iteration = new AtomicInteger();
-        costMap.forEach((iter, costGrad) -> {
+        costMap.forEach((iter, costValue) -> {
             int index = iteration.getAndIncrement();
             iterations[index] = iter;
-            costs[index] = costGrad;
+            costs[index] = costValue;
         });
 
         XYChart chart = QuickChart.getChart("Cost Chart", "Iterations", "Cost", "cost(iter)", iterations, costs);

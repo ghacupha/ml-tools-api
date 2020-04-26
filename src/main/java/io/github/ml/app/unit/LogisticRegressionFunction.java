@@ -9,31 +9,20 @@ import static io.github.ml.app.unit.RegressionUtils.sigmoidFunction;
  * <p>
  * That is the hypothesis is identical except that the sigmoid function is applied to the raw model output
  */
-public class LogisticRegressionFunction implements RegressionFunction {
-
-    private final LinearRegressionFunction linearRegressionFunction;
+public class LogisticRegressionFunction extends AbstractRegressionFunction  implements RegressionFunction {
 
     public LogisticRegressionFunction(final double[] thetaVector) {
-        this.linearRegressionFunction = new LinearRegressionFunction(thetaVector);
+        super(thetaVector);
     }
 
     @Override
     public Double apply(final Double[] featureVector) {
+        final LinearRegressionFunction linearRegressionFunction = new LinearRegressionFunction(getThetas());
         return sigmoidFunction().apply(linearRegressionFunction.apply(featureVector));
-    }
-
-    @Override
-    public double[] getThetas() {
-        return linearRegressionFunction.getThetas().clone();
     }
 
     @Override
     public double cost(List<Double[]> dataSet, List<Double> labels) {
         return RegressionUtils.logCost(this, dataSet, labels);
-    }
-
-    @Override
-    public double[] derivative(List<Double[]> dataSet, List<Double> labels) {
-        return RegressionUtils.computeDerivativeTerm(this, dataSet, labels);
     }
 }

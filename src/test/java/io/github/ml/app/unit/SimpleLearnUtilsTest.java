@@ -19,9 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Please refer to the excel file iris.xlsx for manual cost computation.
  * The theta vector is assumed to consist of 4 elements each 0.5 which is applied to the feature
- * vector, the result of which is compared to the actual label, resulting in the error.
- * The error is squared for each example and the sum is computed as 3199.925
- * If the above is divided by 2 * m, the result should be around 15.999625
+ * vector, the result of which is compared to the actual label, resulting in the h computation
+ * based on a sigmoid from an estimate of the natural log of e
  */
 @Slf4j
 public class SimpleLearnUtilsTest {

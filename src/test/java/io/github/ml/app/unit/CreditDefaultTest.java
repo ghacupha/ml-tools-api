@@ -110,11 +110,11 @@ public class CreditDefaultTest {
 
         RegressionFunction targetFunction = new LogisticRegressionFunction(thetaVector);
 
-        double cost = cost(targetFunction, dataset, labels);
+        double cost = targetFunction.cost(dataset, labels);
 
-        log.info("Cost for the model before training is  : {}", cost(targetFunction, dataset, labels));
+        log.info("Cost for the model before training is  : {}", cost);
 
-        assertEquals(0.125, cost, 0.0000001);
+        assertEquals(0.6931471805595935, cost, 0.0000001);
 
         // @formatter:off
         LearningInputs inputs = LearningInputs.builder()
@@ -128,7 +128,7 @@ public class CreditDefaultTest {
         // @formatter:on
 
 
-        GradientDescent gradientDescentAlgorithm = new GradientDescent();
+        LogGradientDescent gradientDescentAlgorithm = new LogGradientDescent();
 
         RegressionFunction trainedModel = gradientDescentAlgorithm.apply(inputs);
 

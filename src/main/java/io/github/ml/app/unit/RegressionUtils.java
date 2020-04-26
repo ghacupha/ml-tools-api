@@ -117,8 +117,8 @@ public class RegressionUtils {
      * MLE-based computation of loss for logistic regression
      *
      * @param targetFunction logisticRegression Function
-     * @param dataSet feature matrix
-     * @param labels y vector
+     * @param dataSet        feature matrix
+     * @param labels         y vector
      * @return cost of the logistic function
      */
     public static double logCost(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels) {
@@ -131,7 +131,7 @@ public class RegressionUtils {
 
             double y = labels.get(i);
 
-            double cost = - (y * log(h) + (1 - y) * log(1 - h)) / (double) m;
+            double cost = -(y * log(h) + (1 - y) * log(1 - h)) / (double) m;
 
             totalCost += cost;
         }
@@ -225,20 +225,66 @@ public class RegressionUtils {
      * If the cost decreases but is still not optimal, it means the model is underfitting, meaning it is unable to capture
      * the underlying trend of the data.
      *
-     * @param targetFunction
-     * @param dataset
-     * @param labels
+     * @param targetFunction functions whose theta we are updating
+     * @param dataSet        x matrix
+     * @param labels         y vector
      * @param alpha          learning rate
-     * @return
+     * @return A trained function
      */
-    public static RegressionFunction iterationUpdate(RegressionFunction targetFunction,
-                                           List<Double[]> dataset,
-                                           List<Double> labels,
-                                           double alpha) {
+    public static AbstractRegressionFunction logIterationUpdate(RegressionFunction targetFunction,
+                                                        List<Double[]> dataSet,
+                                                        List<Double> labels,
+                                                        double alpha) {
+
+        double[] thetaVector = targetFunction.getThetas(double[] newThetaVector = new double[thetaVector.length];
+        double[] partialDerivatives = computeDerivativeTerm(targetFunction, dataSet, labels);
+
+        // compute the new theta
+        for (int j = 0; j < thetaVector.length; j++) {
+            // compute the new theta  value
+            newThetaVector[j] = thetaVector[j] - alpha * partialDerivatives[j];
+        }
+
+        return new LogisticRegressionFunction(newThetaVector);
+    }
+
+    /**
+     * This function trains a linear regression function using the famous gradient descent algorithm.
+     * The output is an improved target function using the new theta parameters.
+     * Gradient descent minimizes the cost function by finding the combination of theta that produce the
+     * lowest cost based on the training data.
+     * Within each iteration a new, better value will be computed for each individual theta parameter of the
+     * new vector.
+     * The learning rate controls the size of the computing step within each iteration, and this computation is
+     * repeated until you reach  a theta value combination that fits well.
+     * Within each iteration we compute a new value for each theta parameter in parallel. After each iteration a
+     * new better fitting instance of the LinearRegressionFunction is created using the new theta vector.
+     * <p>
+     * This train method will be called again and again and fed the new target function with the new thetas from the
+     * previous calculation. These calls will be repeated until the tuned target function's cost reaches a minimum
+     * plateau.
+     * <p>
+     * To validate that the cost is decreasing the cost can be computed after each training step, and with each training
+     * step the cost must decrease. If it does not decrease the learning rate is too high, and the algorithm will shoot
+     * past the minimum value.
+     * <p>
+     * If the cost decreases but is still not optimal, it means the model is underfitting, meaning it is unable to capture
+     * the underlying trend of the data.
+     *
+     * @param targetFunction functions whose theta we are updating
+     * @param dataSet        x matrix
+     * @param labels         y vector
+     * @param alpha          learning rate
+     * @return A trained function
+     */
+    public static RegressionFunction linIterationUpdate(RegressionFunction targetFunction,
+                                                     List<Double[]> dataSet,
+                                                     List<Double> labels,
+                                                     double alpha) {
 
         double[] thetaVector = targetFunction.getThetas();
         double[] newThetaVector = new double[thetaVector.length];
-        double[] partialDerivatives = computeDerivativeTerm(targetFunction, dataset, labels);
+        double[] partialDerivatives = computeDerivativeTerm(targetFunction, dataSet, labels);
 
         // compute the new theta
         for (int j = 0; j < thetaVector.length; j++) {
@@ -265,15 +311,15 @@ public class RegressionUtils {
      * Calculates and returns a vector of partial derivatives for a given input vector of thetas
      *
      * @param targetFunction Target Function
-     * @param dataSet feature vector
-     * @param labels labels equivalent to the dataSet
-     * @param thetaVector the input vector
+     * @param dataSet        feature vector
+     * @param labels         labels equivalent to the dataSet
+     * @param thetaVector    the input vector
      * @return the vector of first partial derivatives
      */
     public static double[] computeDerivativeTerm(RegressionFunction targetFunction, List<Double[]> dataSet, List<Double> labels, double[] thetaVector) {
         int m = dataSet.size();
         // Summarise the error gap * feature
-        double[] grads = new double [thetaVector.length];
+        double[] grads = new double[thetaVector.length];
         for (int j = 0; j < thetaVector.length; j++) {
             double totalGrad = 0.0;
             for (int i = 0; i < m; i++) {

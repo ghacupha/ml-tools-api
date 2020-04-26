@@ -4,31 +4,18 @@ import io.github.ml.app.chart.Plottable;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Function;
 
 /**
- * This is the class responsible for calling the train function to optimize the LinearRegressionFunction.
+ * This is gradient descent applied for the case of logistic regression. Unlike the typical gradient descent it uses
  * <p>
- * In a sense the gradient descent algorithm is maintained here. Informal ideas have been applied
- * <p>
- * to cater for instances when the double value degrades into Infinity or NaN in which case the function
- * <p>
- * will simply return the LinearRegressionFunction with the previous theta values which had the
- * <p>
- * least cost. Normal models do not work like that, but normal models are not created in java.
- * <p>
- * With every iteration we take the theta value and subtract the learning rate multiplied by the derivative
- * <p>
- * term. The derivative term for linear regression and the derivative term for logistic regression are
- * <p>
- * different, so in future we need to methods for each.
+ * the logIterationUpdate which returns a LogisticRegressionFunction
  */
 @Slf4j
-public class GradientDescent implements Function<LearningInputs, RegressionFunction>, Plottable<Map<Integer, Double>> {
+public class LogGradientDescent implements Function<LearningInputs, RegressionFunction>, Plottable<Map<Integer, Double>> {
+
 
     private final Map<Integer, Double> costPlot = new HashMap<>();
     private final Map<double[], Double> thetaMap = new HashMap<>();
@@ -50,32 +37,38 @@ public class GradientDescent implements Function<LearningInputs, RegressionFunct
 
         RegressionFunction targetFunction = inputs.getTargetFunction();
 
-        double cost = RegressionUtils.cost(targetFunction, inputs.getDataset(), inputs.getLabels());
+        double cost = targetFunction.cost(inputs.getDataset(), inputs.getLabels());
 
         costPlot.put(iteration, cost);
 
         for (int i = 0; i <= inputs.getMaximumIterations(); i++) {
+
+            iteration++;
 
             double[] oldTheta = targetFunction.getThetas().clone();
 
             thetaMap.put(oldTheta, cost);
 
             // Train model to get new theta
-            targetFunction = RegressionUtils.linIterationUpdate(targetFunction, inputs.getDataset(), inputs.getLabels(), inputs.getAlpha());
+            targetFunction = RegressionUtils.logIterationUpdate(targetFunction, inputs.getDataset(), inputs.getLabels(), inputs.getAlpha());
 
             newTheta = targetFunction.getThetas().clone();
 
-            cost = RegressionUtils.cost(new LinearRegressionFunction(newTheta), inputs.getDataset(), inputs.getLabels());
+            // cost of the newTheta Update
+            cost = targetFunction.cost(inputs.getDataset(), inputs.getLabels());
 
-            RegressionFunction min = infiniteCostInterruption(startUp, iteration, cost);
-
-            if (min != null) return min;
-
+            if (Double.isNaN(cost) || Double.isInfinite(cost)) {
+                // at this point the model has degraded better to use older theta
+                Map.Entry<double[], Double> min = Collections.min(thetaMap.entrySet(), (entry1, entry2) -> entry1.getValue().compareTo(entry2.getValue() * -1));
+                log.info("Function has been interrupted @ cost of {} after {} iterations in {} ms", min.getValue(), iteration, System.currentTimeMillis() - startUp);
+                return new LogisticRegressionFunction(min.getKey());
+            }
+//
             // the chart library cannot chart infinity
             if (!Double.isInfinite(cost) || !Double.isNaN(cost)) {
-                costPlot.put(iteration++, cost);
+                costPlot.put(iteration, cost);
             }
-
+//
             if (convergenceIsAttained(oldTheta, newTheta, inputs.getEpsilon())) {
                 log.info("Convergence attained after {} iterations", iteration);
                 break;
@@ -84,21 +77,7 @@ public class GradientDescent implements Function<LearningInputs, RegressionFunct
 
         log.info("Function has been optimised to a cost of {} after {} iterations in {} ms", cost, iteration, System.currentTimeMillis() - startUp);
 
-        return new LinearRegressionFunction(newTheta);
-    }
-
-    private RegressionFunction infiniteCostInterruption(long startUp, int iteration, double cost) {
-        if (Double.isNaN(cost) || Double.isInfinite(cost)) {
-            // at this point the model has degraded better to use older theta
-            Entry<double[], Double> min = Collections.min(thetaMap.entrySet(), new Comparator<Entry<double[], Double>>() {
-                public int compare(Entry<double[], Double> entry1, Entry<double[], Double> entry2) {
-                    return entry1.getValue().compareTo(entry2.getValue() * -1);
-                }
-            });
-            log.info("Function has been interrupted @ cost of {} after {} iterations in {} ms", min.getValue(), iteration, System.currentTimeMillis() - startUp);
-            return new LinearRegressionFunction(min.getKey());
-        }
-        return null;
+        return new LogisticRegressionFunction(newTheta);
     }
 
     /**

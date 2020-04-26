@@ -6,12 +6,10 @@ import java.util.List;
  * This is a simple function for applying a theta vector learned in a model to a feature
  * vector.
  */
-public class LinearRegressionFunction implements RegressionFunction {
-
-    private final double[] thetaVector;
+public class LinearRegressionFunction extends AbstractRegressionFunction implements RegressionFunction {
 
     public LinearRegressionFunction(final double[] thetaVector) {
-        this.thetaVector = thetaVector;
+        super(thetaVector);
     }
 
     /**
@@ -27,7 +25,9 @@ public class LinearRegressionFunction implements RegressionFunction {
 
         double prediction = 0;
 
-        if (featureVector.length != thetaVector.length){
+        double[] thetaVector = getThetas();
+
+        if (featureVector.length != getThetas().length){
             throw new IllegalArgumentException("The dimension of the feature vector must equal the theta vector");
         }
         for (int i=0; i < featureVector.length; i++) {
@@ -37,22 +37,8 @@ public class LinearRegressionFunction implements RegressionFunction {
         return prediction;
     }
 
-    /**
-     *
-     * @return A copy of the theta vector
-     */
-    @Override
-    public double[] getThetas() {
-        return this.thetaVector.clone();
-    }
-
     @Override
     public double cost(List<Double[]> dataSet, List<Double> labels) {
         return RegressionUtils.cost(this, dataSet, labels);
-    }
-
-    @Override
-    public double[] derivative(List<Double[]> dataSet, List<Double> labels) {
-        return RegressionUtils.computeDerivativeTerm(this, dataSet, labels);
     }
 }
