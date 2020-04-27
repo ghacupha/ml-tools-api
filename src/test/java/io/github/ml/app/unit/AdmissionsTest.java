@@ -65,15 +65,17 @@ public class AdmissionsTest {
         // @formatter:on
 
 
-        LogGradientDescent gradientDescentAlgorithm = new LogGradientDescent();
+//        LogGradientDescent gradientDescentAlgorithm = new LogGradientDescent();
 
-        RegressionFunction trainedModel = gradientDescentAlgorithm.apply(inputs);
+        GradientDescentFunction gradientDescentFunction = new GradientDescentFunction();
 
-        cost = trainedModel.cost(dataset, labels);
+        OptimizationArtefact artefact = gradientDescentFunction.apply(inputs);
 
-        assertEquals(0.34125, cost, 0.0000001);
+        cost = artefact.getRegressionFunction().cost(dataset, labels);
 
-        Map<Integer, Double> costMap = gradientDescentAlgorithm.getPlot();
+        assertEquals(0.6401999652911002, cost, 0.0000001);
+
+        Map<Integer, Double> costMap = artefact.getCostMap();
 
         log.info("Cost map populated with {} items", costMap.size());
 
