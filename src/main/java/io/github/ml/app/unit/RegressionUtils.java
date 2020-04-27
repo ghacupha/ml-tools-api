@@ -321,14 +321,22 @@ public class RegressionUtils {
         int m = dataSet.size();
         // Summarise the error gap * feature
         double[] grads = new double[thetaVector.length];
+
+        // for debugging...
+        int column = 0;
+        int row = 0;
+
         for (int j = 0; j < thetaVector.length; j++) {
+            column++;
+            row = 0; // reset row count
             double totalGrad = 0.0;
             for (int i = 0; i < m; i++) {
+                row++;
                 Double[] featureVector = dataSet.get(i);
                 double error = targetFunction.apply(featureVector) - labels.get(i);
-                totalGrad += error * featureVector[j];
+                totalGrad += error * featureVector[j] / (double) m;
             }
-            grads[j] = (1.0 / (double) m) * totalGrad;
+            grads[j] = totalGrad;
         }
         return grads;
     }
