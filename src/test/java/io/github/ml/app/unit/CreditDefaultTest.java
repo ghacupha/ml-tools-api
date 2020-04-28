@@ -21,6 +21,7 @@ import static io.github.ml.app.excel.ExcelTestUtil.creditExcelFileDeserializer;
 import static io.github.ml.app.excel.ExcelTestUtil.readFile;
 import static io.github.ml.app.excel.ExcelTestUtil.toBytes;
 import static io.github.ml.app.unit.RegressionUtils.cost;
+import static io.github.ml.app.unit.RegressionUtils.logCost;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.knowm.xchart.BitmapEncoder.saveBitmap;
 
@@ -122,19 +123,21 @@ public class CreditDefaultTest {
                                             .dataset(dataset)
                                             .labels(labels)
                                             .alpha(0.01)
-                                            .epsilon(0.001)
-                                            .maximumIterations(10000000)
+                                            .epsilon(0.0001)
+                                            .maximumIterations(1000)
                                             .build();
         // @formatter:on
 
 
-        LogGradientDescent gradientDescentAlgorithm = new LogGradientDescent();
+        GradientDescentFunction gradientDescentAlgorithm = new GradientDescentFunction();
 
-        RegressionFunction trainedModel = gradientDescentAlgorithm.apply(inputs);
+        OptimizationArtefact artefact = gradientDescentAlgorithm.apply(inputs);
 
-        log.info("Cost for the model is  : {}", cost(trainedModel, dataset, labels));
+        RegressionFunction trainedModel = artefact.getRegressionFunction();
 
-        Map<Integer, Double> costAndGradientMap = gradientDescentAlgorithm.getPlot();
+        log.info("Cost for the model is  : {}", logCost(trainedModel, dataset, labels));
+
+        Map<Integer, Double> costAndGradientMap = artefact.getCostMap();
 
         // Plot the graph
         XYChart chart = costGradientPlot.plotGraph(costAndGradientMap).costChart();
